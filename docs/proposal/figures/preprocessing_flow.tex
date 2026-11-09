@@ -1,13 +1,20 @@
 \begin{center}
-\begin{minipage}{\columnwidth}
-\centering
-\flowbox{.24\linewidth}{Train\\3.202 ảnh}\hfill
-\flowbox{.24\linewidth}{Validation\\565 ảnh}\hfill
-\flowbox{.24\linewidth}{Test\\558 ảnh}
-\par\medskip
-\begin{tabular}{@{}c@{\,$\rightarrow$\,}c@{\,$\rightarrow$\,}c@{}}
-\flowbox{.12\linewidth}{Ảnh} & \flowbox{.35\linewidth}{RGB, resize/crop\\chuẩn hóa} & \flowbox{.28\linewidth}{$3\times224\times224$}\\[5pt]
-\flowbox{.12\linewidth}{Câu} & \flowbox{.35\linewidth}{NFC, chữ thường\\tách token} & \flowbox{.28\linewidth}{Token IDs\\BOS/EOS/PAD}
-\end{tabular}
-\end{minipage}
+\begin{tikzpicture}[x=1cm,y=1cm,
+ every node/.style={font=\fontsize{8.5}{10}\selectfont,align=center},
+ box/.style={draw=black!40,rounded corners=2pt,minimum height=.65cm,inner sep=3pt},
+ arr/.style={-{Stealth[length=1.5mm]},thick,draw=black!65}]
+\node[font=\fontsize{9}{11}\selectfont\bfseries,anchor=west] at (-.05,.7) {CHIA THEO ẢNH · seed 42};
+\node[box,fill=black!5,text width=1.95cm] at (1,0) {Train · 3.202 ảnh};
+\node[box,fill=black!5,text width=1.95cm] at (3.5,0) {Val · 565 ảnh};
+\node[box,fill=black!5,text width=1.95cm] at (6,0) {Test · 558 ảnh};
+\node[box,fill=blue!6,text width=1.3cm] (im) at (.65,-1) {Ảnh RGB};
+\node[box,fill=blue!6,text width=2.2cm] (ip) at (3.25,-1) {Resize / crop\\Chuẩn hóa};
+\node[box,fill=blue!6,text width=1.65cm] (it) at (6,-1) {Tensor ảnh\\$3\times224\times224$};
+\draw[arr] (im)--(ip); \draw[arr] (ip)--(it);
+\node[box,fill=green!7,text width=1.3cm] (tx) at (.65,-2) {Chú thích};
+\node[box,fill=green!7,text width=2.2cm] (tp) at (3.25,-2) {NFC, chữ thường\\Token hóa};
+\node[box,fill=green!7,text width=1.65cm] (tt) at (6,-2) {Token IDs\\Mask đệm};
+\draw[arr] (tx)--(tp); \draw[arr] (tp)--(tt);
+\node[anchor=west,font=\fontsize{8}{9.5}\selectfont] at (-.05,-2.9) {Vocabulary: học từ train $\rightarrow$ dùng cố định cho val/test.};
+\end{tikzpicture}
 \end{center}

@@ -4,6 +4,8 @@
 \usepackage{fontspec}
 \IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Times New Roman}}
 \usepackage{graphicx,booktabs,tabularx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \definecolor{flowblue}{RGB}{234,243,250}
 \newcommand{\flowbox}[2]{\fcolorbox{black!35}{flowblue}{\parbox[c]{#1}{\centering\fontsize{9}{10.5}\selectfont #2}}}
 \renewcommand{\figurename}{Hình}
@@ -27,7 +29,7 @@ Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do c
 Chia theo ảnh với seed 42; mọi chú thích của một ảnh thuộc cùng một tập. Hai ảnh phía train trùng byte với test đã được cách ly.
 
 \input{figures/preprocessing_flow.tex}
-Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới của từ đã tách. Vocabulary chỉ xây trên train, thêm BOS/EOS/PAD/UNK. Audit ghi nhận 13 ảnh validation gần trùng train; cần lưu ý khi diễn giải kết quả.
+Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới; thêm BOS/EOS/PAD/UNK. Audit ghi nhận 13 ảnh validation gần trùng train, cần lưu ý khi diễn giải kết quả.
 
 \section{Baseline và phương pháp dự kiến}
 \textbf{Baseline CNN--LSTM:} CNN trích xuất vector ảnh toàn cục, LSTM sinh từng token, theo hướng \citet{vinyals2015show}.
@@ -38,11 +40,11 @@ Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới của t�
 
 Đóng băng encoder; huấn luyện decoder bằng teacher forcing và cross-entropy bỏ PAD. Khởi đầu batch 32, tối đa 25 epochs, dừng sớm theo CIDEr validation; lưu cấu hình và log.
 
-\textbf{Phần mở rộng:} sau khi hoàn thành hai mô hình bắt buộc, ưu tiên thay ResNet50 bằng image encoder của CLIP, giữ chung decoder và quy trình đánh giá để khảo sát ảnh hưởng của encoder. Nếu còn thời gian, xây ứng dụng tìm ảnh bằng câu tiếng Việt: sinh chú thích cho kho ảnh, rồi xếp hạng ảnh theo độ tương đồng ngữ nghĩa giữa truy vấn và chú thích. Minh phụ trách encoder, Mạnh phụ trách tìm kiếm và demo.
+\textbf{Phần mở rộng:} sau hai mô hình bắt buộc, ưu tiên thay ResNet50 bằng encoder ảnh CLIP, giữ decoder và quy trình đánh giá để so sánh. Nếu đủ thời gian, tìm ảnh theo tương đồng ngữ nghĩa giữa truy vấn tiếng Việt và caption sinh. Minh phụ trách CLIP, Mạnh phụ trách tìm kiếm và demo.
 
 \section{Cách đánh giá}
 \input{figures/evaluation_flow.tex}
-Chấm BLEU-1/2/3/4 và CIDEr ở mức corpus, dùng đủ năm references mỗi ảnh và chung tokenizer. Chọn checkpoint/cách giải mã trên validation, khóa cấu hình trước test; không dùng test để tinh chỉnh. Bổ sung so sánh có/không attention và phân tích lỗi đối tượng, hành động, quan hệ.
+Chấm điểm ở mức corpus với chung tokenizer, không dùng test để tinh chỉnh. Bổ sung so sánh có/không attention và phân tích lỗi đối tượng, hành động, quan hệ.
 
 \section{Kế hoạch sáu tuần}
 \begin{center}

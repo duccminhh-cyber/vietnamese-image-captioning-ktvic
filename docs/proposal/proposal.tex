@@ -42,7 +42,7 @@ Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do c
 
 Đóng băng encoder; huấn luyện decoder bằng teacher forcing và cross-entropy bỏ PAD. Khởi đầu batch 32, tối đa 25 epochs, dừng sớm theo CIDEr validation; lưu cấu hình và log.
 
-\textbf{Phần mở rộng:} sau hai mô hình bắt buộc, ưu tiên thay ResNet50 bằng encoder ảnh CLIP, giữ decoder và quy trình đánh giá để so sánh. Nếu đủ thời gian, tìm ảnh theo tương đồng ngữ nghĩa giữa truy vấn tiếng Việt và caption sinh. Minh phụ trách CLIP, Mạnh phụ trách tìm kiếm và demo.
+\textbf{Phần mở rộng:} sau hai mô hình bắt buộc, ưu tiên thay ResNet50 bằng encoder ảnh CLIP, giữ decoder và quy trình đánh giá để so sánh. Nếu đủ thời gian, tìm ảnh theo tương đồng ngữ nghĩa giữa truy vấn tiếng Việt và caption sinh.
 
 \section{Cách đánh giá}
 \begin{itemize}
@@ -52,30 +52,13 @@ Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do c
 \end{itemize}
 Không dùng test để tinh chỉnh mô hình.
 
-\section{Kế hoạch sáu tuần}
-\begin{center}
-\begin{tabularx}{\columnwidth}{@{}lX@{}}
-\toprule
-Tuần & Công việc và mốc bàn giao\\
-\midrule
-1 & Đọc tài liệu, dữ liệu, môi trường; proposal.\\
-2 & Baseline, kiểm tra pipeline, log huấn luyện.\\
-3 & LSTM attention, Transformer; milestone.\\
-4 & So sánh, ablation, tinh chỉnh trên validation.\\
-5 & Thử CLIP; tìm ảnh nếu đủ thời gian; nháp.\\
-6 & Báo cáo ACL, mã nguồn, slide và demo.\\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\textbf{Phân công dự kiến}
+\section{Phân công dự kiến}
 \begin{itemize}
 \item \textbf{Nguyễn Đức Minh:} dữ liệu, tokenizer, CNN và LSTM attention.
 \item \textbf{Đoàn Quang Mạnh:} Transformer, bộ đánh giá và so sánh thí nghiệm.
 \item \textbf{Cả hai:} rà mã, phân tích lỗi, viết báo cáo và chuẩn bị thuyết trình.
 \end{itemize}
 
-\noindent\textit{Khai báo công cụ:} AI hỗ trợ chuẩn bị mã, kiểm tra và soạn thảo; nhóm chịu trách nhiệm kiểm chứng nội dung.
 \newpage
 \bibliography{references}
 \end{document}

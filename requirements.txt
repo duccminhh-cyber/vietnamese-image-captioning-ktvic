@@ -1,0 +1,6 @@
+# Versions verified in the current Python 3.13 CPU environment.
+# On Kaggle, use its existing compatible CUDA torch/torchvision installation.
+torch==2.14.1
+torchvision==0.29.1
+Pillow==12.3.0
+numpy==2.5.3

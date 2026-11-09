@@ -36,6 +36,17 @@ vào đặc trưng ảnh, cùng thông tin vị trí. Bài báo gốc tập trun
 việc ghép CNN với decoder là thiết kế của dự án.
 Câu hỏi khi đọc: vì sao cần causal mask, padding mask và positional encoding?
 
+## 4. Show and Tell (baseline bổ sung)
+
+Vinyals, Toshev, Bengio và Erhan (2015), *Show and Tell: A Neural Image Caption Generator*, CVPR.
+[Bài báo](https://arxiv.org/abs/1411.4555).
+
+Mô hình kết hợp biểu diễn ảnh và bộ sinh câu hồi quy để học xác suất chú thích
+theo ảnh. Đây là tài liệu tham chiếu cho baseline CNN–LSTM không attention;
+baseline dự án dùng ResNet50 nên không phải tái lập nguyên kiến trúc của bài báo.
+Đối chiếu với Show, Attend and Tell để hiểu khác biệt giữa vector toàn cục
+và việc chọn vùng ảnh theo từng token.
+
 ## Nhật ký đọc của nhóm
 
 | Thành viên | Tài liệu | Ngày đọc | Nhận xét/câu hỏi |

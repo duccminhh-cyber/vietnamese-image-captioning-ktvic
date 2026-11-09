@@ -15,7 +15,7 @@ nhóm cần xác nhận ngoại lệ hai người với giảng viên. Phân cô
 ## Hồ sơ tuần 1
 
 - [Proposal PDF](docs/proposal/Nhom10_DeTai05_Proposal.pdf) và [nguồn LaTeX](docs/proposal/proposal.tex).
-- [Ba bài báo nền tảng](docs/papers.md), [kế hoạch sáu tuần](docs/PLAN.md).
+- [Tài liệu nền tảng và baseline](docs/papers.md), [kế hoạch sáu tuần](docs/PLAN.md).
 - [Hướng dẫn dữ liệu](data/README.md), [phạm vi và nguồn mã](docs/PROVENANCE.md).
 - [Khai báo AI](docs/AI_USAGE.md), [kiểm tra bàn giao](docs/CHECKLIST.md).
 - [Kết quả kiểm tra thực tế](docs/VERIFICATION.md).

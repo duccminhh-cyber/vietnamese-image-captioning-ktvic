@@ -3,7 +3,8 @@
 \usepackage[final]{acl}
 \usepackage{fontspec}
 \IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Times New Roman}}
-\usepackage{amsmath,booktabs,tabularx}
+\usepackage{graphicx,booktabs,tabularx}
+\renewcommand{\figurename}{Hình}
 \renewcommand{\abstractname}{Tóm tắt}
 \renewcommand{\refname}{Tài liệu tham khảo}
 \title{Sinh chú thích ảnh tiếng Việt trên KTVIC}
@@ -11,25 +12,34 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Nhóm nghiên cứu bài toán nhận một ảnh RGB và sinh một câu mô tả tiếng Việt. Trên bộ dữ liệu KTVIC, nhóm so sánh CNN encoder kết hợp LSTM có attention với Transformer decoder dùng chung đặc trưng thị giác. Quy trình thống nhất cách chia dữ liệu, từ vựng và đánh giá bằng BLEU, CIDEr; bổ sung phân tích lỗi và chi phí tính toán. Bản đề xuất này xác định phạm vi, thiết kế thí nghiệm và phân công cho hai thành viên, sử dụng lại nền tảng mã nguồn hiện có của dự án.
+Nhóm nghiên cứu bài toán sinh chú thích ảnh tiếng Việt trên bộ dữ liệu KTVIC. Hai hướng tiếp cận chính là CNN kết hợp LSTM có attention và CNN kết hợp Transformer decoder. Các mô hình được so sánh trên cùng cách chia dữ liệu, tiền xử lý và chỉ số BLEU, CIDEr, kèm phân tích lỗi của câu mô tả.
 \end{abstract}
 
 \section{Bài toán và mục tiêu}
-Đầu vào là ảnh RGB, đầu ra là một câu mô tả nội dung chính bằng tiếng Việt. Mô hình học phân phối $p(y\mid I)=\prod_t p(y_t\mid y_{<t},I)$. Câu hỏi nghiên cứu là hai loại decoder khác nhau thế nào về chất lượng mô tả, lỗi đối tượng và quan hệ, cũng như thời gian tính toán khi giữ chung encoder và dữ liệu. Không giả định trước Transformer sẽ tốt hơn trên dữ liệu nhỏ.
+Đầu vào là một ảnh RGB; đầu ra là một câu mô tả nội dung chính bằng tiếng Việt. Mục tiêu là xây dựng hệ thống chú thích ảnh và so sánh chất lượng sinh câu của LSTM có attention với Transformer decoder khi dùng chung CNN encoder và dữ liệu huấn luyện.
 
 \section{Dữ liệu và tiền xử lý}
 Nhóm chọn KTVIC, bộ dữ liệu mô tả ảnh tiếng Việt thuộc miền đời sống \citep{pham2024ktvic}. Bản dữ liệu local có 3.769 ảnh official train, mỗi ảnh năm chú thích. Sử dụng split hiện có với seed 42: 3.202 ảnh train, 565 validation và 558 official test; hai bản ảnh phía train trùng byte với test đã được cách ly. Các chú thích của một ảnh luôn thuộc cùng một tập.
 
-Văn bản dùng \texttt{segment\_caption}, chuẩn Unicode NFC, chuyển chữ thường, tách theo khoảng trắng và giữ dấu gạch dưới. Vocabulary chỉ học từ train, ngưỡng tần suất 2; độ dài tối đa 64 token gồm BOS/EOS. Ảnh chuyển RGB, chuẩn hóa theo encoder, kích thước $224\times224$. Không dùng test để chọn siêu tham số. Audit cũ ghi nhận 13 ảnh validation gần trùng train; đây là hạn chế phải công bố.
+\begin{center}
+\includegraphics[height=3.8cm]{figures/ktvic_example_00000000004.jpg}
+\captionof{figure}{Mẫu ảnh train KTVIC, ID 4. Hai trong năm chú thích gốc: ``người phụ nữ đang nhìn vào những chiếc đèn lồng''; ``người phụ nữ đang ngắm những chiếc đèn lồng ở trước mặt''. Đây là nhãn dữ liệu, không phải câu do mô hình sinh.}
+\label{fig:sample}
+\end{center}
 
-\section{Phương pháp và thí nghiệm}
-\textbf{Mô hình bắt buộc A1:} ResNet50 tiền huấn luyện trích xuất lưới $7\times7$; LSTM dùng additive soft attention để tổng hợp vùng ảnh theo từng bước sinh, theo hướng \citet{xu2015attention}.
+Ảnh được chuyển RGB, chuẩn hóa theo encoder và đưa về $224\times224$. Văn bản dùng \texttt{segment\_caption}, chuẩn Unicode NFC, chữ thường và giữ dấu gạch dưới của từ đã tách. Vocabulary chỉ xây trên train; thêm token bắt đầu, kết thúc, đệm và từ ngoài từ vựng. Audit dữ liệu hiện có ghi nhận 13 ảnh validation gần trùng train; hạn chế này được lưu ý khi diễn giải kết quả.
 
-\textbf{Mô hình so sánh T1:} dùng cùng CNN, chiếu đặc trưng về 256 chiều; Transformer decoder có hai lớp, bốn heads, masked self-attention và cross-attention vào ảnh \citep{vaswani2017attention}. B0 (CNN toàn cục + LSTM không attention) là baseline bổ sung, không thay thế A1.
+\section{Baseline và phương pháp dự kiến}
+\textbf{Baseline CNN--LSTM:} CNN trích xuất đặc trưng ảnh toàn cục, LSTM sinh câu từng token, theo hướng encoder--decoder của \citet{vinyals2015show}. Đây là baseline tham chiếu, không thay thế mô hình có attention theo yêu cầu đề bài.
 
-Đóng băng encoder trong so sánh chính. Huấn luyện decoder bằng teacher forcing và cross-entropy bỏ PAD, giữ EOS; khởi đầu batch 32, tối đa 25 epochs, dừng sớm theo CIDEr validation. Ghi đầy đủ seed, optimizer, số tham số học được, cấu hình và thời gian của từng mô hình.
+\textbf{CNN--LSTM có attention:} ResNet50 tiền huấn luyện giữ lưới đặc trưng $7\times7$; LSTM dùng additive soft attention để tổng hợp vùng ảnh ở từng bước sinh, theo hướng \citet{xu2015attention}.
 
-Đánh giá corpus BLEU-1/2/3/4 và CIDEr với đủ năm references mỗi ảnh, cùng quy tắc xử lý prediction/reference. Chọn checkpoint và greedy hoặc beam độ rộng 3 trên validation; khóa protocol trước test. Ablation dự kiến thay attention động bằng ngữ cảnh trung bình; phân tích thêm lỗi đối tượng, hành động, số lượng, quan hệ, lặp từ và kiểm tra tráo ảnh. Không diễn giải attention map như bằng chứng nhân quả. CLIP là mở rộng nếu đủ thời gian.
+\textbf{CNN--Transformer:} dùng cùng CNN encoder; Transformer decoder gồm masked self-attention trên chuỗi token và cross-attention vào đặc trưng ảnh \citep{vaswani2017attention}.
+
+Encoder được đóng băng trong so sánh chính. Decoder được huấn luyện bằng teacher forcing và cross-entropy bỏ qua token đệm. Cấu hình khởi đầu dùng batch 32, tối đa 25 epochs và dừng sớm theo CIDEr validation; lưu siêu tham số, seed và log để tái lập.
+
+\section{Cách đánh giá}
+Đánh giá bằng BLEU-1/2/3/4 và CIDEr ở mức corpus với đủ năm chú thích tham chiếu mỗi ảnh. Giữ chung split, tokenizer và quy tắc chấm điểm; chọn checkpoint và cách giải mã trên validation, khóa cấu hình trước khi đánh giá test. Bổ sung so sánh có/không có attention, ví dụ sinh câu tốt và sai, lỗi đối tượng, hành động và quan hệ trong ảnh. Không dùng test để tinh chỉnh mô hình.
 
 \section{Kế hoạch sáu tuần}
 \begin{center}
@@ -39,7 +49,7 @@ Tuần & Công việc và mốc bàn giao\\
 \midrule
 1 & Đọc tài liệu, dữ liệu, môi trường; proposal.\\
 2 & Baseline, kiểm tra pipeline, log huấn luyện.\\
-3 & A1 và T1; milestone tối đa 4 trang.\\
+3 & LSTM attention, Transformer; milestone.\\
 4 & So sánh, ablation, tinh chỉnh trên validation.\\
 5 & Mở rộng, phân tích lỗi; nháp báo cáo.\\
 6 & Báo cáo ACL, mã nguồn, slide và demo.\\
@@ -47,11 +57,8 @@ Tuần & Công việc và mốc bàn giao\\
 \end{tabularx}
 \end{center}
 
-\textbf{Phân công dự kiến:} Nguyễn Đức Minh phụ trách dữ liệu, tokenizer, CNN và LSTM attention. Đoàn Quang Mạnh phụ trách Transformer, bộ đánh giá và so sánh thí nghiệm. Cả hai cùng rà mã của nhau, phân tích lỗi, viết báo cáo và chuẩn bị vấn đáp. Phân công này không xác nhận tỷ lệ đóng góp thực tế.
+\textbf{Phân công dự kiến:} Nguyễn Đức Minh phụ trách dữ liệu, tokenizer, CNN và LSTM attention. Đoàn Quang Mạnh phụ trách Transformer, bộ đánh giá và so sánh thí nghiệm. Cả hai cùng rà mã, phân tích lỗi, viết báo cáo và chuẩn bị thuyết trình.
 
-\section{Sản phẩm và trạng thái}
-Sản phẩm gồm repo riêng tư với README, mã đọc dữ liệu, kiểm tra tái lập, log, báo cáo ACL và demo. Dữ liệu, trọng số lớn được cung cấp qua nguồn tải riêng. Dùng CPU để kiểm tra pipeline; GPU huấn luyện cần được bố trí và ghi cấu hình thực tế.
-
-Bản này soạn ngày 09/11/2026 từ dự án đã có mã và các kết quả ở giai đoạn sau; lịch sáu tuần là khung học phần, không phải bằng chứng nộp đúng hạn hay khẳng định dự án mới bắt đầu. Repo tuần 1 là bản chọn lọc cho mốc đầu, không công bố lại kết quả test. Đề yêu cầu ba người; nhóm hai người cần được giảng viên chấp thuận. AI hỗ trợ chuẩn bị mã, kiểm tra và soạn thảo; thành viên chịu trách nhiệm kiểm chứng và giải thích. Tài liệu tham khảo dưới đây cần được hai thành viên đọc và đối chiếu.
+\noindent\textit{Khai báo công cụ:} AI hỗ trợ chuẩn bị mã, kiểm tra và soạn thảo; nhóm chịu trách nhiệm kiểm chứng nội dung.
 \bibliography{references}
 \end{document}

@@ -3,7 +3,7 @@
 - [x] Tên/MSSV: Nguyễn Đức Minh 24022405; Đoàn Quang Mạnh 24022339.
 - [x] Phân công dự kiến cho hai người; A1 và T1 đều nằm trong phạm vi.
 - [x] Proposal có bài toán, dữ liệu, mô hình, đánh giá, kế hoạch và phân công.
-- [x] Không đưa raw dataset, ảnh, checkpoint hay thông tin đăng nhập vào repo.
+- [x] Không đưa toàn bộ dataset, checkpoint hay thông tin đăng nhập vào repo; chỉ có một ảnh mẫu KTVIC được dẫn nguồn trong proposal.
 - [ ] Hai thành viên đọc lại proposal, đọc bài báo và rà mã.
 - [ ] Giảng viên xác nhận nhóm hai người; xác nhận mã nhóm 10 nếu có thay đổi.
 - [ ] Repo GitHub riêng tư đã tạo và push thành công.

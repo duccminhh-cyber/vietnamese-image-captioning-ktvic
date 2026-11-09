@@ -20,3 +20,7 @@ cho toàn bộ code/template khi chưa có xác nhận của nhóm.
 
 Template ACL: https://github.com/acl-org/acl-style-files .
 Thư viện và ý tưởng bài báo được khai báo ở README, requirements và proposal.
+
+Lần sửa proposal ngày 09/11/2026 bổ sung một ảnh mẫu train KTVIC (ID 4) theo yêu cầu
+của người dùng. Ảnh được sao chép nguyên bản vào docs/proposal/figures/ để PDF có
+thể biên dịch độc lập. Nguồn và chú thích nằm trong figures/README.md.

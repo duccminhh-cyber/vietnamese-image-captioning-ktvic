@@ -12,18 +12,6 @@ với **CNN + Transformer decoder**, đánh giá BLEU và CIDEr.
 Cả hai cùng rà mã, phân tích lỗi và viết báo cáo. Đề ghi nhóm ba người;
 nhóm cần xác nhận ngoại lệ hai người với giảng viên. Phân công chưa phải xác nhận đóng góp thực tế.
 
-## Hồ sơ tuần 1
-
-- [Proposal PDF](docs/proposal/Nhom10_DeTai05_Proposal.pdf) và [nguồn LaTeX](docs/proposal/proposal.tex).
-- [Tài liệu nền tảng và baseline](docs/papers.md), [kế hoạch sáu tuần](docs/PLAN.md).
-- [Hướng dẫn dữ liệu](data/README.md), [phạm vi và nguồn mã](docs/PROVENANCE.md).
-- [Khai báo AI](docs/AI_USAGE.md), [kiểm tra bàn giao](docs/CHECKLIST.md).
-- [Kết quả kiểm tra thực tế](docs/VERIFICATION.md).
-
-**Trạng thái:** soạn ngày 09/11/2026, chọn lọc từ dự án local đã phát triển xa hơn.
-Đây không phải bằng chứng đã nộp tuần 1, không tạo lại lịch sử commit trong quá khứ.
-Bộ này chỉ đóng gói pipeline dữ liệu và tài liệu; các mô hình/metrics ở dự án gốc
-không được sao chép sang. Chưa tuyên bố giảng viên nhận bài hay hai thành viên đã đọc hết tài liệu.
 
 ## Cài đặt
 
@@ -38,8 +26,7 @@ python -m unittest discover -s tests -v
 
 Trên Linux dùng `source .venv/bin/activate`. `requirements.txt` cố định các phiên bản
 đã có trong môi trường kiểm tra; cài mới từ Internet chưa được nghiệm thu.
-GPU không cần cho tuần 1. Khi dùng Kaggle/GPU về sau, dùng cặp torch/torchvision
-CUDA tương thích của nền tảng, ghi lại phiên bản thực tế, không cài đè bộ CPU.
+
 
 ## Chuẩn bị dữ liệu một lần
 
@@ -89,7 +76,6 @@ scripts/       chuẩn bị dữ liệu, kiểm tra tuần 1
 tests/         kiểm thử bằng dữ liệu tổng hợp, không cần tải dataset
 notebooks/     EDA không lưu output chứa dữ liệu gốc
 data/          hướng dẫn tải; dữ liệu thật bị Git bỏ qua
-outputs/       báo cáo local tự sinh, bị Git bỏ qua
 ```
 
-Xem [hướng dẫn GitHub](docs/GITHUB.md) để đẩy repo riêng tư và mời giảng viên.
+

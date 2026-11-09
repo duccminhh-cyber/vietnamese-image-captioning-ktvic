@@ -62,12 +62,21 @@ Lệnh kiểm tra từ chối ghi đè báo cáo; khi chạy lại, truyền `--
 
 ## Thiết kế thí nghiệm
 
-- A1: ResNet50 spatial encoder + LSTM với additive attention, yêu cầu tối thiểu.
-- T1: cùng encoder + Transformer decoder, mô hình so sánh bắt buộc.
-- B0: CNN global + LSTM không attention, baseline phụ nếu đủ thời gian.
+| Mã | Mô hình | Vai trò |
+|---|---|---|
+| B0 | ResNet50 global encoder + LSTM không attention | Baseline tham chiếu, theo hướng Show and Tell |
+| A1 | ResNet50 spatial encoder + LSTM với additive attention | Mô hình có attention theo yêu cầu đề bài |
+| T1 | Cùng spatial encoder với A1 + Transformer decoder | Mô hình so sánh chính với A1 |
+
+B0 là baseline trong kế hoạch thí nghiệm. Hai mô hình A1 và T1 đáp ứng yêu cầu
+so sánh LSTM có attention với Transformer decoder của đề bài.
+
 - Cùng split theo ảnh, vocabulary train-only và quy tắc tính BLEU/CIDEr.
 - Chọn checkpoint/decoding trên validation, khóa protocol trước test.
-- Ablation attention và phân tích lỗi; CLIP là mở rộng tùy thời gian.
+- Ablation attention và phân tích lỗi.
+- Mở rộng sau các mô hình chính: thử encoder ảnh CLIP; tìm ảnh bằng câu tiếng Việt nếu đủ thời gian.
+
+Repo tuần 1 hiện chứa pipeline dữ liệu; mã mô hình B0/A1/T1 chưa được đưa vào repo này.
 
 ## Cấu trúc
 

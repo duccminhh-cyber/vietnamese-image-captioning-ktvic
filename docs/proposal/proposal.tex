@@ -4,6 +4,8 @@
 \usepackage{fontspec}
 \IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Times New Roman}}
 \usepackage{graphicx,booktabs,tabularx}
+\definecolor{flowblue}{RGB}{234,243,250}
+\newcommand{\flowbox}[2]{\fcolorbox{black!35}{flowblue}{\parbox[c]{#1}{\centering\fontsize{9}{10.5}\selectfont #2}}}
 \renewcommand{\figurename}{Hình}
 \renewcommand{\abstractname}{Tóm tắt}
 \renewcommand{\refname}{Tài liệu tham khảo}
@@ -11,35 +13,34 @@
 \author{Nguyễn Đức Minh (24022405) \quad Đoàn Quang Mạnh (24022339)\\Nhóm 10 -- Đề tài 05 -- Môn Học sâu}
 \begin{document}
 \maketitle
-\begin{abstract}
-Nhóm nghiên cứu bài toán sinh chú thích ảnh tiếng Việt trên bộ dữ liệu KTVIC. Hai hướng tiếp cận chính là CNN kết hợp LSTM có attention và CNN kết hợp Transformer decoder. Các mô hình được so sánh trên cùng cách chia dữ liệu, tiền xử lý và chỉ số BLEU, CIDEr, kèm phân tích lỗi của câu mô tả.
-\end{abstract}
-
 \section{Bài toán và mục tiêu}
-Đầu vào là một ảnh RGB; đầu ra là một câu mô tả nội dung chính bằng tiếng Việt. Mục tiêu là xây dựng hệ thống chú thích ảnh và so sánh chất lượng sinh câu của LSTM có attention với Transformer decoder khi dùng chung CNN encoder và dữ liệu huấn luyện.
+Đầu vào là một ảnh RGB; đầu ra là một câu mô tả tiếng Việt. Nhóm so sánh LSTM có attention với Transformer decoder khi dùng chung CNN encoder và dữ liệu huấn luyện.
+\input{figures/task_flow.tex}
 
 \section{Dữ liệu và tiền xử lý}
 Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do con người gán nhãn, thuộc miền đời sống \citep{pham2024ktvic}. Mỗi ảnh có năm cặp \texttt{caption} và \texttt{segment\_caption}; Hình~\ref{fig:sample} minh họa cấu trúc này.
 
 \input{figures/annotation_example.tex}
 
-\textbf{Lý do lựa chọn.} So với UIT-ViIC, vốn tập trung vào các môn thể thao với bóng \citep{lam2020uitviic}, miền đời sống của KTVIC phù hợp hơn với mục tiêu mô tả hoạt động thường ngày. So với phương án tự dịch MS-COCO sang tiếng Việt, KTVIC có sẵn nhãn tiếng Việt và bản tách từ, giúp nhóm hai người giảm công dịch và kiểm tra sai lệch nghĩa. Quy mô này cũng phù hợp với phạm vi thí nghiệm sáu tuần của nhóm. Đây là lựa chọn theo mục tiêu và nguồn lực, không khẳng định KTVIC tốt hơn mọi bộ dữ liệu.
+\textbf{Lý do lựa chọn.} UIT-ViIC tập trung vào thể thao với bóng \citep{lam2020uitviic}, còn KTVIC phù hợp mục tiêu mô tả đời sống thường ngày. So với tự dịch MS-COCO, nhãn tiếng Việt và bản tách từ sẵn có giúp giảm công dịch và kiểm tra sai lệch nghĩa. Nhóm chọn KTVIC theo phạm vi sáu tuần và nguồn lực hai người, không coi đây là bộ dữ liệu tốt nhất cho mọi bài toán.
 
-Sử dụng split hiện có với seed 42: 3.202 ảnh train, 565 validation và 558 test; hai ảnh phía train trùng byte với test đã được cách ly. Mọi chú thích của một ảnh thuộc cùng một tập.
+Chia theo ảnh với seed 42; mọi chú thích của một ảnh thuộc cùng một tập. Hai ảnh phía train trùng byte với test đã được cách ly.
 
-Ảnh được chuyển RGB, chuẩn hóa theo encoder và đưa về $224\times224$. Văn bản dùng \texttt{segment\_caption}, chuẩn Unicode NFC, chữ thường và giữ dấu gạch dưới của từ đã tách. Vocabulary chỉ xây trên train; thêm token bắt đầu, kết thúc, đệm và từ ngoài từ vựng. Audit dữ liệu hiện có ghi nhận 13 ảnh validation gần trùng train; hạn chế này được lưu ý khi diễn giải kết quả.
+\input{figures/preprocessing_flow.tex}
+Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới của từ đã tách. Vocabulary chỉ xây trên train, thêm BOS/EOS/PAD/UNK. Audit ghi nhận 13 ảnh validation gần trùng train; cần lưu ý khi diễn giải kết quả.
 
 \section{Baseline và phương pháp dự kiến}
-\textbf{Baseline CNN--LSTM:} CNN trích xuất đặc trưng ảnh toàn cục, LSTM sinh câu từng token, theo hướng encoder--decoder của \citet{vinyals2015show}. Đây là baseline tham chiếu, không thay thế mô hình có attention theo yêu cầu đề bài.
+\textbf{Baseline CNN--LSTM:} CNN trích xuất vector ảnh toàn cục, LSTM sinh từng token, theo hướng \citet{vinyals2015show}.
 
 \textbf{CNN--LSTM có attention:} ResNet50 tiền huấn luyện giữ lưới đặc trưng $7\times7$; LSTM dùng additive soft attention để tổng hợp vùng ảnh ở từng bước sinh, theo hướng \citet{xu2015attention}.
 
 \textbf{CNN--Transformer:} dùng cùng CNN encoder; Transformer decoder gồm masked self-attention trên chuỗi token và cross-attention vào đặc trưng ảnh \citep{vaswani2017attention}.
 
-Encoder được đóng băng trong so sánh chính. Decoder được huấn luyện bằng teacher forcing và cross-entropy bỏ qua token đệm. Cấu hình khởi đầu dùng batch 32, tối đa 25 epochs và dừng sớm theo CIDEr validation; lưu siêu tham số, seed và log để tái lập.
+Đóng băng encoder; huấn luyện decoder bằng teacher forcing và cross-entropy bỏ PAD. Khởi đầu batch 32, tối đa 25 epochs, dừng sớm theo CIDEr validation; lưu cấu hình và log.
 
 \section{Cách đánh giá}
-Đánh giá bằng BLEU-1/2/3/4 và CIDEr ở mức corpus với đủ năm chú thích tham chiếu mỗi ảnh. Giữ chung split, tokenizer và quy tắc chấm điểm; chọn checkpoint và cách giải mã trên validation, khóa cấu hình trước khi đánh giá test. Bổ sung so sánh có/không có attention, ví dụ sinh câu tốt và sai, lỗi đối tượng, hành động và quan hệ trong ảnh. Không dùng test để tinh chỉnh mô hình.
+\input{figures/evaluation_flow.tex}
+Chấm BLEU-1/2/3/4 và CIDEr ở mức corpus, dùng đủ năm references mỗi ảnh và chung tokenizer. Chọn checkpoint/cách giải mã trên validation, khóa cấu hình trước test; không dùng test để tinh chỉnh. Bổ sung so sánh có/không attention và phân tích lỗi đối tượng, hành động, quan hệ.
 
 \section{Kế hoạch sáu tuần}
 \begin{center}
@@ -57,7 +58,12 @@ Tuần & Công việc và mốc bàn giao\\
 \end{tabularx}
 \end{center}
 
-\textbf{Phân công dự kiến:} Nguyễn Đức Minh phụ trách dữ liệu, tokenizer, CNN và LSTM attention. Đoàn Quang Mạnh phụ trách Transformer, bộ đánh giá và so sánh thí nghiệm. Cả hai cùng rà mã, phân tích lỗi, viết báo cáo và chuẩn bị thuyết trình.
+\textbf{Phân công dự kiến}
+\begin{itemize}
+\item \textbf{Nguyễn Đức Minh:} dữ liệu, tokenizer, CNN và LSTM attention.
+\item \textbf{Đoàn Quang Mạnh:} Transformer, bộ đánh giá và so sánh thí nghiệm.
+\item \textbf{Cả hai:} rà mã, phân tích lỗi, viết báo cáo và chuẩn bị thuyết trình.
+\end{itemize}
 
 \noindent\textit{Khai báo công cụ:} AI hỗ trợ chuẩn bị mã, kiểm tra và soạn thảo; nhóm chịu trách nhiệm kiểm chứng nội dung.
 \newpage

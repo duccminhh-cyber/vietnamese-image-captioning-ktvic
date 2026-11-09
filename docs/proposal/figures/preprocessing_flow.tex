@@ -1,0 +1,13 @@
+\begin{center}
+\begin{minipage}{\columnwidth}
+\centering
+\flowbox{.24\linewidth}{Train\\3.202 ảnh}\hfill
+\flowbox{.24\linewidth}{Validation\\565 ảnh}\hfill
+\flowbox{.24\linewidth}{Test\\558 ảnh}
+\par\medskip
+\begin{tabular}{@{}c@{\,$\rightarrow$\,}c@{\,$\rightarrow$\,}c@{}}
+\flowbox{.12\linewidth}{Ảnh} & \flowbox{.35\linewidth}{RGB, resize/crop\\chuẩn hóa} & \flowbox{.28\linewidth}{$3\times224\times224$}\\[5pt]
+\flowbox{.12\linewidth}{Câu} & \flowbox{.35\linewidth}{NFC, chữ thường\\tách token} & \flowbox{.28\linewidth}{Token IDs\\BOS/EOS/PAD}
+\end{tabular}
+\end{minipage}
+\end{center}

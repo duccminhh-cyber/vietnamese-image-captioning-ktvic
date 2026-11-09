@@ -4,8 +4,6 @@
 \usepackage{fontspec}
 \IfFontExistsTF{TeX Gyre Termes}{\setmainfont{TeX Gyre Termes}}{\setmainfont{Times New Roman}}
 \usepackage{graphicx,booktabs,tabularx}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta}
 \definecolor{flowblue}{RGB}{234,243,250}
 \newcommand{\flowbox}[2]{\fcolorbox{black!35}{flowblue}{\parbox[c]{#1}{\centering\fontsize{9}{10.5}\selectfont #2}}}
 \renewcommand{\figurename}{Hình}
@@ -26,10 +24,14 @@ Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do c
 
 \textbf{Lý do lựa chọn.} UIT-ViIC tập trung vào thể thao với bóng \citep{lam2020uitviic}, còn KTVIC phù hợp mục tiêu mô tả đời sống thường ngày. So với tự dịch MS-COCO, nhãn tiếng Việt và bản tách từ sẵn có giúp giảm công dịch và kiểm tra sai lệch nghĩa. Nhóm chọn KTVIC theo phạm vi sáu tuần và nguồn lực hai người, không coi đây là bộ dữ liệu tốt nhất cho mọi bài toán.
 
-Chia theo ảnh với seed 42; mọi chú thích của một ảnh thuộc cùng một tập. Hai ảnh phía train trùng byte với test đã được cách ly.
-
-\input{figures/preprocessing_flow.tex}
-Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới; thêm BOS/EOS/PAD/UNK. Audit ghi nhận 13 ảnh validation gần trùng train, cần lưu ý khi diễn giải kết quả.
+\textbf{Các bước tiền xử lý}
+\begin{itemize}
+\item \textbf{Chia dữ liệu:} kiểm tra trùng ảnh $\rightarrow$ cách ly 2 ảnh train trùng byte với test $\rightarrow$ chia theo ảnh, seed 42: train 3.202, validation 565, test 558 ảnh. Các chú thích của một ảnh luôn cùng tập.
+\item \textbf{Ảnh:} RGB $\rightarrow$ resize/crop $224\times224$ $\rightarrow$ chuẩn hóa $\rightarrow$ tensor $3\times224\times224$.
+\item \textbf{Văn bản:} \texttt{segment\_caption} $\rightarrow$ Unicode NFC $\rightarrow$ chữ thường $\rightarrow$ tách token, giữ dấu gạch dưới.
+\item \textbf{Mã hóa:} xây vocabulary chỉ từ train $\rightarrow$ thêm BOS/EOS/PAD/UNK $\rightarrow$ token IDs và padding mask; dùng cố định cho validation/test.
+\end{itemize}
+\textit{Lưu ý:} audit ghi nhận 13 ảnh validation gần trùng train; cần công bố khi diễn giải kết quả.
 
 \section{Baseline và phương pháp dự kiến}
 \textbf{Baseline CNN--LSTM:} CNN trích xuất vector ảnh toàn cục, LSTM sinh từng token, theo hướng \citet{vinyals2015show}.
@@ -43,8 +45,12 @@ Văn bản dùng \texttt{segment\_caption}, giữ dấu gạch dưới; thêm BO
 \textbf{Phần mở rộng:} sau hai mô hình bắt buộc, ưu tiên thay ResNet50 bằng encoder ảnh CLIP, giữ decoder và quy trình đánh giá để so sánh. Nếu đủ thời gian, tìm ảnh theo tương đồng ngữ nghĩa giữa truy vấn tiếng Việt và caption sinh. Minh phụ trách CLIP, Mạnh phụ trách tìm kiếm và demo.
 
 \section{Cách đánh giá}
-\input{figures/evaluation_flow.tex}
-Chấm điểm ở mức corpus với chung tokenizer, không dùng test để tinh chỉnh. Bổ sung so sánh có/không attention và phân tích lỗi đối tượng, hành động, quan hệ.
+\begin{itemize}
+\item \textbf{Chọn mô hình:} đánh giá trên validation $\rightarrow$ chọn checkpoint và cách giải mã $\rightarrow$ khóa cấu hình.
+\item \textbf{Chấm test:} ảnh test $\rightarrow$ mô hình đã chọn $\rightarrow$ câu dự đoán $\rightarrow$ đối chiếu đủ 5 chú thích tham chiếu mỗi ảnh $\rightarrow$ BLEU-1/2/3/4 và CIDEr ở mức corpus.
+\item \textbf{So sánh:} cùng split, tokenizer và cách chấm $\rightarrow$ so sánh decoder, có/không attention $\rightarrow$ phân tích lỗi đối tượng, hành động, quan hệ.
+\end{itemize}
+Không dùng test để tinh chỉnh mô hình.
 
 \section{Kế hoạch sáu tuần}
 \begin{center}

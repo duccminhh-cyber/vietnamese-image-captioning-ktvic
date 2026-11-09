@@ -20,8 +20,5 @@ outputs/
 *.out
 *.blg
 *.bbl
-docs/proposal/build/
-docs/proposal/preview/
-docs/proposal/proposal.pdf
 local_only/
 .DS_Store

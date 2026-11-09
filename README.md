@@ -12,7 +12,7 @@ với **CNN + Transformer decoder**, đánh giá BLEU và CIDEr.
 Cả hai cùng rà mã, phân tích lỗi và viết báo cáo. Đề ghi nhóm ba người;
 nhóm cần xác nhận ngoại lệ hai người với giảng viên. Phân công chưa phải xác nhận đóng góp thực tế.
 
-Proposal: [bản PDF cuối](docs/proposal/Nhom10_DeTai05_Proposal.pdf).
+Proposal: [bản PDF cuối](docs/Nhom10_DeTai05_Proposal.pdf).
 Nguồn LaTeX để chỉnh tiếp nằm ở `local_only/proposal_source/` trên máy và được
 Git bỏ qua. Biên dịch bằng XeLaTeX → BibTeX → XeLaTeX hai lần tại thư mục nguồn.
 
@@ -81,7 +81,7 @@ Repo tuần 1 hiện chứa pipeline dữ liệu; mã mô hình B0/A1/T1 chưa �
 ## Cấu trúc
 
 ```text
-docs/proposal/ PDF proposal cuối
+docs/          PDF proposal cuối
 src/data/      annotation, split, tokenizer, Dataset và collator
 src/utils/     seed và tái lập
 scripts/       chuẩn bị dữ liệu, kiểm tra tuần 1

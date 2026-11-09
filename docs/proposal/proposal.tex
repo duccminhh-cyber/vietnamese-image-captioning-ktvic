@@ -19,13 +19,13 @@ Nhóm nghiên cứu bài toán sinh chú thích ảnh tiếng Việt trên bộ 
 Đầu vào là một ảnh RGB; đầu ra là một câu mô tả nội dung chính bằng tiếng Việt. Mục tiêu là xây dựng hệ thống chú thích ảnh và so sánh chất lượng sinh câu của LSTM có attention với Transformer decoder khi dùng chung CNN encoder và dữ liệu huấn luyện.
 
 \section{Dữ liệu và tiền xử lý}
-Nhóm chọn KTVIC, bộ dữ liệu mô tả ảnh tiếng Việt thuộc miền đời sống \citep{pham2024ktvic}. Bản dữ liệu local có 3.769 ảnh official train, mỗi ảnh năm chú thích. Sử dụng split hiện có với seed 42: 3.202 ảnh train, 565 validation và 558 official test; hai bản ảnh phía train trùng byte với test đã được cách ly. Các chú thích của một ảnh luôn thuộc cùng một tập.
+Nhóm chọn KTVIC, gồm 4.327 ảnh và 21.635 chú thích tiếng Việt do con người gán nhãn, thuộc miền đời sống \citep{pham2024ktvic}. Mỗi ảnh có năm cặp \texttt{caption} và \texttt{segment\_caption}; Hình~\ref{fig:sample} minh họa cấu trúc này.
 
-\begin{center}
-\includegraphics[height=3.8cm]{figures/ktvic_example_00000000004.jpg}
-\captionof{figure}{Mẫu ảnh train KTVIC, ID 4. Hai trong năm chú thích gốc: ``người phụ nữ đang nhìn vào những chiếc đèn lồng''; ``người phụ nữ đang ngắm những chiếc đèn lồng ở trước mặt''. Đây là nhãn dữ liệu, không phải câu do mô hình sinh.}
-\label{fig:sample}
-\end{center}
+\input{figures/annotation_example.tex}
+
+\textbf{Lý do lựa chọn.} So với UIT-ViIC, vốn tập trung vào các môn thể thao với bóng \citep{lam2020uitviic}, miền đời sống của KTVIC phù hợp hơn với mục tiêu mô tả hoạt động thường ngày. So với phương án tự dịch MS-COCO sang tiếng Việt, KTVIC có sẵn nhãn tiếng Việt và bản tách từ, giúp nhóm hai người giảm công dịch và kiểm tra sai lệch nghĩa. Quy mô này cũng phù hợp với phạm vi thí nghiệm sáu tuần của nhóm. Đây là lựa chọn theo mục tiêu và nguồn lực, không khẳng định KTVIC tốt hơn mọi bộ dữ liệu.
+
+Sử dụng split hiện có với seed 42: 3.202 ảnh train, 565 validation và 558 test; hai ảnh phía train trùng byte với test đã được cách ly. Mọi chú thích của một ảnh thuộc cùng một tập.
 
 Ảnh được chuyển RGB, chuẩn hóa theo encoder và đưa về $224\times224$. Văn bản dùng \texttt{segment\_caption}, chuẩn Unicode NFC, chữ thường và giữ dấu gạch dưới của từ đã tách. Vocabulary chỉ xây trên train; thêm token bắt đầu, kết thúc, đệm và từ ngoài từ vựng. Audit dữ liệu hiện có ghi nhận 13 ảnh validation gần trùng train; hạn chế này được lưu ý khi diễn giải kết quả.
 
@@ -60,5 +60,6 @@ Tuần & Công việc và mốc bàn giao\\
 \textbf{Phân công dự kiến:} Nguyễn Đức Minh phụ trách dữ liệu, tokenizer, CNN và LSTM attention. Đoàn Quang Mạnh phụ trách Transformer, bộ đánh giá và so sánh thí nghiệm. Cả hai cùng rà mã, phân tích lỗi, viết báo cáo và chuẩn bị thuyết trình.
 
 \noindent\textit{Khai báo công cụ:} AI hỗ trợ chuẩn bị mã, kiểm tra và soạn thảo; nhóm chịu trách nhiệm kiểm chứng nội dung.
+\newpage
 \bibliography{references}
 \end{document}
